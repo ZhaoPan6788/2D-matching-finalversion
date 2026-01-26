@@ -1,0 +1,41 @@
+{
+    "material_amount": 4,
+    "material_type": {
+        "material_type_vacuum": 0,
+        "material_type_metal": 1,
+        "material_type_dielectric": 2
+    },
+    "point_type": {
+        "point_type_vacuum": 0,
+        "point_type_metal": 1,
+        "point_type_dielectric_inner": -1,
+        "point_type_dielectric_vacuum_boundary": -2
+    },
+    "edge_type": {
+        "edge_type_vacuum_to_metal": 0,
+        "edge_type_vacuum_to_dielectric": 1,
+        "edge_type_metal_to_vacuum": 2,
+        "edge_type_dielectric_to_vacuum": 3
+    },
+    "materials": [
+        {
+            "type": 0,
+            "name": "vacuum"
+        },
+        {
+            "type": 1,
+            "name": "top electrode"
+        },
+        {
+            "type": 1,
+            "name": "bottom electrode"
+        },
+        {
+            "type": 2,
+            "name": "dielectric",
+            "permittivity": 2.2,
+            "permeability": 1.0,
+            "conductivity": 1.0
+        }
+    ]
+}
