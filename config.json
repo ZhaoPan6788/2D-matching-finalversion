@@ -1,11 +1,11 @@
 {
     "control": {
-        "nrun": 16000,
+        "nrun":3000,
         "dt": 2e-11,
 
         "is_open_ctest": false,
         "check_particle_overstep": true,
-        "is_restart": true,
+        "is_restart": false,
 
         "pic_type": 1,
         "@pic_type": "0=explicit | 1=implicit",
@@ -27,9 +27,9 @@
         "r_length": 0.00,
         "@r_length": "rLength is invalid",
 
-        "deps_in_z": 8,
+        "deps_in_z": 1,
         "@deps_in_z": "Number of images in the z-direction",
-        "deps_in_r": 32,
+        "deps_in_r": 4,
         "@deps_in_r": "Number of images in the r-direction",
 
         "deps_type": 0,
@@ -70,7 +70,7 @@
 
     "gas": {
         "ng": 1,
-        "pressure": 100,
+        "pressure": 200,
         "temperature": 300,
         "name": [
             "CF4"
@@ -87,7 +87,7 @@
 
         "is_open_recombination": true,
         "recb": {
-            "recb_time_step_num": 50,
+            "recb_time_step_num": 20,
             "recb_reaction_num": 3,
             "recb_list": [
                 [1, 2, 0],
