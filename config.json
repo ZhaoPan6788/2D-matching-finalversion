@@ -107,20 +107,28 @@
         "circuits_number": 2,
         "circuits_list": [
             {
-                "type": 2,
+                "type": 5,
                 "metal_index": 1,
                 "name": "source_to_top_electrode",
-                "Vdc": 0,
                 "n_freq": 1,
                 "frequency": [
                     13.56e6
                 ],
                 "amplitude": [
-                    500.0
+                    200.0
                 ],
                 "phase": [
                     0.0
-                ]
+                ],
+                "Rs": 50.0,
+                "Cm1": 150.0e-12,
+                "Cm2": 200.0e-12,
+                "Lm": 4.3e-6,
+                "Rm": 0.5,
+                "is_open_capacitance": false,
+                "C_stray": 24e-12,
+                "L_stray": 0.01e-6,
+                "R_stray": 0.5
             },
             {
                 "type": 1,
