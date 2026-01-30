@@ -26,6 +26,7 @@ options:
     -m/merge    If set, automatically merge tasks based on number of cores. Default is not set.
     -c/current  If set, generate a launch script for the current directory. Default is not set.
     -max_core   The maximum number of cores per node. Default is 64.
+    -match      If set, generate a launch script for impedance matching. Default is not set.
     -y          If set, the script silent running. Default is not set.
     -h/help     Output help information.
 
@@ -47,7 +48,7 @@ from base.remove_files import remove_files
 from base.filter_files_with_regex import filter_files_with_regex
 from base.create_folder import create_folder
 from base.batch_exe import batch_exe
-from base.generate_launch import generate_launch, generate_pbs, generate_slurm
+from base.generate_launch import generate_launch, generate_pbs, generate_slurm, generate_match
 from base.import_json import import_json
 from base.copy_file_or_folder import copy_file_or_folder
 from base.integer_grouping import integer_grouping
@@ -74,6 +75,8 @@ if __name__ == '__main__':
     is_pbs = False
     is_slurm = False
     par_name = "test"
+    
+    is_match = False
 
     merge_tasks = False
     is_current = False
@@ -138,6 +141,9 @@ if __name__ == '__main__':
             if "max_core" in input_dict:
                 max_core = input_dict["max_core"]
 
+            if "match" in input_dict:
+                is_match = True
+
             if "y" in input_dict:
                 silence_flag = input_dict["y"]
 
@@ -188,8 +194,13 @@ if __name__ == '__main__':
                 #     exe_args = ['srun', '-n '+str(core_num), '--exclusive -c 1', os.path.join(idir, exe_name)]
                 # else:
                 exe_args = ['mpirun', '-np', str(core_num), os.path.join(idir, exe_name)]
-                generate_launch(os.path.split(os.path.realpath(__file__))[0], 
-                                idir, launch_name, [exe_args])
+
+                if is_match:
+                    generate_match(os.path.split(os.path.realpath(__file__))[0], 
+                                    idir, launch_name, [exe_args])
+                else:
+                    generate_launch(os.path.split(os.path.realpath(__file__))[0], 
+                                    idir, launch_name, [exe_args])
 
                 nodes, ppn = get_nodes_ppn(core_num, max_core)
 
@@ -256,8 +267,12 @@ if __name__ == '__main__':
 
                     exes.append(exe_args)
 
-                generate_launch(os.path.split(os.path.realpath(__file__))[0], 
-                                task_path_tmp, launch_name, exes)
+                if is_match:
+                    generate_match(os.path.split(os.path.realpath(__file__))[0], 
+                                    task_path_tmp, launch_name, exes)
+                else:
+                    generate_launch(os.path.split(os.path.realpath(__file__))[0], 
+                                    task_path_tmp, launch_name, exes)
 
                 nodes, ppn = get_nodes_ppn(group_cores_sum[i], max_core)
                 if is_pbs:

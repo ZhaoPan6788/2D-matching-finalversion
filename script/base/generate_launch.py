@@ -99,3 +99,28 @@ def generate_launch(base_path, launch_path, launch_name, task_paths):
 
     with open(os.path.join(launch_path, launch_name), 'w') as f:
         f.write(launch_str)
+
+
+def generate_match(base_path, launch_path, launch_name, task_paths):
+    """
+    Generate a launch script that executes the impedance matching loop.
+    """
+    launch_str = ''
+    launch_str = launch_str + 'import sys\n'
+    launch_str = launch_str + 'import os\n'
+    # Force single thread for numpy/scipy to avoid conflict with MPI
+    launch_str = launch_str + 'os.environ["OPENBLAS_NUM_THREADS"] = "1"\n'
+    launch_str = launch_str + 'os.environ["MKL_NUM_THREADS"] = "1"\n'
+    launch_str = launch_str + 'os.environ["NUMEXPR_NUM_THREADS"] = "1"\n'
+    launch_str = launch_str + 'os.environ["OMP_NUM_THREADS"] = "1"\n'
+
+    launch_str = launch_str + 'sys.path.append("{}")\n'.format(base_path)
+    launch_str = launch_str + 'from base.batch_exe import batch_exe\n'
+    # Import the match function from our new module
+    launch_str = launch_str + 'from base.match import match\n' 
+    launch_str = launch_str + '\n'
+    # Call match with the list of task paths
+    launch_str = launch_str + 'match({})\n'.format(task_paths)
+
+    with open(os.path.join(launch_path, launch_name), 'w') as f:
+        f.write(launch_str)

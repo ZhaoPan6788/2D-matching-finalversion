@@ -520,3 +520,38 @@ linestyle_tuple = [('solid', 'solid'),
                    ('dashdotdotted', (0, (3, 5, 1, 5, 1, 5))),
                    ('loosely dashdotdotted', (0, (3, 10, 1, 10, 1, 10))),
                    ('densely dashdotdotted', (0, (3, 1, 1, 1, 1, 1)))]
+
+def run_command(cmd, work_dir=None):
+    """
+    执行系统 shell 命令的通用封装。
+    
+    :param cmd: 要执行的命令字符串 (例如: 'mpirun -np 4 ./bin/ZPrun2D')
+    :param work_dir: (可选) 执行命令的工作目录。如果不指定，则在当前目录执行。
+    :return: 命令执行的返回码 (0 表示成功)
+    """
+    import os
+    
+    # 记录当前目录，以便执行后切回
+    cwd = os.getcwd()
+    
+    # 如果指定了工作目录，先切换过去
+    if work_dir:
+        if not os.path.exists(work_dir):
+            print(f"[Error] Work directory not found: {work_dir}")
+            return -1
+        os.chdir(work_dir)
+        
+    print(f"Executing: {cmd}")
+    
+    # 执行命令
+    # 注意：这里使用了 os.system，为了更高级的控制也可以换成 subprocess.run
+    ret = os.system(cmd)
+    
+    if ret != 0:
+        print(f"[Warning] Command '{cmd}' returned non-zero exit code: {ret}")
+        
+    # 切回原目录
+    if work_dir:
+        os.chdir(cwd)
+        
+    return ret

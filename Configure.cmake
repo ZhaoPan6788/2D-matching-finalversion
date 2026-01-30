@@ -34,7 +34,7 @@ set(NG_MAX ${jsonConfig.gas.ng_max} CACHE STRING "the max gas number")
 set(NS_MAX ${jsonConfig.gas.ns_max} CACHE STRING "the max specy number per gas")
 
 # lib
-set(NAME_PROJECT "ZP-testCF4_grid30" CACHE STRING "project name")
+set(NAME_PROJECT "pic2d-mpi" CACHE STRING "project name")
 set(NAME_SOLVER "petsc-solver" CACHE STRING "petsc solver name")
 set(NAME_FLIB "fortran-lib" CACHE STRING "fortran lib name")
 
