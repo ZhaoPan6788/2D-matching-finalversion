@@ -14,7 +14,7 @@ import shutil
 
 sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))
 from base.common import get_domain_info, draw_domain
-from geom.geometry import *
+from script.geom.simplegeom.geometry import *
 from base.common import *
 
 import numpy as np

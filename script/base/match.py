@@ -13,17 +13,17 @@ from base.common import run_command  # 假设你有一个运行命令的封装
 
 # --- 全局配置常量 ---
 is_first_run = True        # restart
-start_match = 5
+start_match = 1000
 match_count = 8
-match_cycle = 10
+match_cycle = 2000
 GAMMA_TOL = 0.05    # 反射系数收敛阈值 (Gamma < 0.05 意味着 VSWR < 1.1)
 POP_SIZE = 15       # 差分进化种群大小
 MAX_ITER = 30       # 每次匹配周期的最大优化迭代次数
 
 # 优化边界 (单位: Farads) - 根据实际 RF 匹配网络设计调整
 BOUNDS = [
-    (10e-12, 2000e-12), # Cm1 (Shunt, 并联电容)
-    (10e-12, 1000e-12)  # Cm2 (Series, 串联电容)
+    (1e-12, 20000e-12), # Cm1 (Shunt, 并联电容)
+    (1e-12, 10000e-12)  # Cm2 (Series, 串联电容)
 ]
 
 def match(task_paths):
@@ -132,6 +132,13 @@ def match(task_paths):
 
             # C4. 评估当前反射系数 Gamma
             g_curr = test_ref_coef([curr_Cm1, curr_Cm2], c)
+            # print(f"   [Analysis] Z_load = {c.Z_load:.2f} Ohm")
+            # print(f"   [Current]  Cm1={curr_Cm1:.2e}, Cm2={curr_Cm2:.2e} => Gamma={g_curr:.4f}")
+            # --- 新增：准备记录字符串 ---
+            log_record = f"Cycle: {n_match}\n"
+            log_record += f"Z_load: {c.Z_load:.2f} Ohm\n"
+            log_record += f"Current: Cm1={curr_Cm1:.2e}, Cm2={curr_Cm2:.2e} => Gamma={g_curr:.4f}\n"
+
             print(f"   [Analysis] Z_load = {c.Z_load:.2f} Ohm")
             print(f"   [Current]  Cm1={curr_Cm1:.2e}, Cm2={curr_Cm2:.2e} => Gamma={g_curr:.4f}")
 
@@ -170,6 +177,34 @@ def match(task_paths):
                 # 立即保存，以便下一轮循环（或手动检查）生效
                 save_json_file(base_path, 'config.json', d)
 
+                # ------------------------------------------------------
+            # C8. 记录阻抗匹配迭代日志 (专为 Origin 优化的 TXT)
+            # ------------------------------------------------------
+            # 定义日志文件路径
+            log_file = os.path.join(base_path, 'match_history.txt')
+            
+            # 检查文件是否存在
+            write_header = not os.path.exists(log_file)
+            
+            with open(log_file, 'a') as lf:
+                if write_header:
+                    # 使用制表符 \t 分隔，且严格只有一行表头。
+                    # 去掉了装饰性的破折号分割线，防止 Origin 将该列误判为文本类型(Text)而非数值类型(Numeric)
+                    header = "Cycle\tZ_load_Re(Ohm)\tZ_load_Im(Ohm)\tOld_Cm1(F)\tOld_Cm2(F)\tOld_Gamma\tNew_Cm1(F)\tNew_Cm2(F)\tNew_Gamma\n"
+                    lf.write(header)
+                
+                # 写入当次匹配周期的数据，同样使用 \t 严格分隔
+                row_data = (f"{n_match}\t{c.Z_load.real:.6f}\t{c.Z_load.imag:.6f}\t"
+                            f"{curr_Cm1:.6e}\t{curr_Cm2:.6e}\t{g_curr:.6f}\t"
+                            f"{best_Cm1:.6e}\t{best_Cm2:.6e}\t{g_pred:.6f}\n")
+                lf.write(row_data)
+                         
+            print(f"   [Logging] Iteration {n_match} data appended to match_history.txt (Origin-Ready)")
+        # # --- 新增：将日志写入文件 ---
+        #     log_record += "-"*40 + "\n"
+        #     match_log_path = os.path.join(base_path, 'impedance_match_record.txt')
+        #     with open(match_log_path, 'a', encoding='utf-8') as f:
+        #         f.write(log_record)
         # ------------------------------------------------------
         # D. 推进循环
         # ------------------------------------------------------
@@ -179,7 +214,7 @@ def run_simulation_cmd(cwd):
     """封装原本的 os.system 调用，建议根据环境修改"""
     # 示例: mpirun -np 4 ./bin/iPM2D
     # 实际项目中，cmd 应该从外部传入或配置中读取
-    run_cmd = 'mpirun -np 4 ./pic2d-mpi' 
+    run_cmd = 'mpirun -np 16 ./pic2d-mpi-5CF4' 
     print(f"Executing: {run_cmd} in {cwd}")
     ret = os.system(f"cd {cwd} && {run_cmd} > run.log 2>&1")
     if ret != 0:

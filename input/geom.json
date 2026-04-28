@@ -1,5 +1,5 @@
 {
-    "material_amount": 4,
+    "material_amount": 5,
     "material_type": {
         "material_type_vacuum": 0,
         "material_type_metal": 1,
@@ -31,9 +31,13 @@
             "name": "bottom electrode"
         },
         {
+            "type": 1,
+            "name": "wall"
+        },
+        {
             "type": 2,
-            "name": "dielectric",
-            "permittivity": 2.2,
+            "name": "dielectric 1",
+            "permittivity": 2.1,
             "permeability": 1.0,
             "conductivity": 1.0
         }

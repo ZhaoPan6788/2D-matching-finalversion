@@ -19,7 +19,7 @@ options:
     -r/rule     Matching rules for the specified task. Default is ".".
     -n/name     The name of the launch file. Default is "launch.py".
     -j/json     The name of the configuration file. Default is "config.json".
-    -e/exe      The name of the executable file. Default is "pic2d-mpi".
+    -e/exe      The name of the executable file. Default is "pic2d-mpi-5CF4".
     -pbs        If set, the pbs script is generated. Default is not set.
     -slurm      If set, the slurm script is generated. Default is not set.
     -par        Partition name for slurm. Default is "test".
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     rule_match = "."
     launch_name = "launch.py"
     config_name = "config.json"
-    exe_name = "pic2d-mpi"
+    exe_name = "pic2d-mpi-5CF4"
     is_pbs = False
     is_slurm = False
     par_name = "test"

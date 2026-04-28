@@ -24,7 +24,7 @@ program pic2d
             ControlFlowGlobal%Timer = ControlFlowGlobal%Timer + 1
 
             call OneStep()
-            if (mod (i, 400) == 0) then
+            if (mod (i, 100) == 0) then
                 call DiagOneStep(ParticleBundleLocal, FieldEMLocal, FieldOneLocal, FieldSourceLocal, GeometryGlobal)
             end if
         end do

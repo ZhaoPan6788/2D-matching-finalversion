@@ -98,3 +98,24 @@ def get_ref_coef(x, *args):
 
 def test_ref_coef(x, *args):
     return get_ref_coef(x, *args)
+
+def get_base_power(voltage, current, dt, base_freq):
+    freq, amp_u, pha_u = get_fftw(voltage, dt)
+    freq, amp_i, pha_i = get_fftw(current, dt)
+
+    base_freq_u, base_amp_u, base_pha_u = get_base_freq_info(
+        freq, amp_u, pha_u, base_freq)
+    base_freq_i, base_amp_i, base_pha_i = get_base_freq_info(
+        freq, amp_i, pha_i, base_freq)
+
+    # print(base_freq_u, base_amp_u, base_pha_u)
+    # print(base_freq_i, base_amp_i, base_pha_i)
+
+    sub_phase = base_pha_u - base_pha_i
+    if sub_phase > 180:
+        sub_phase = sub_phase - 360
+
+    if sub_phase < -180:
+        sub_phase = -sub_phase - 360
+
+    return base_amp_u * base_amp_i * np.cos(sub_phase / 180 * np.pi) / 2

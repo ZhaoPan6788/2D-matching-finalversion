@@ -17,7 +17,7 @@ usage:
 options:
     -s/src      Path to work directory. Default is ".".
     -r/rule     Matching rules for the specified task. Default is ".".
-    -n/name     The name of the executable file. Default is "pic2d-mpi".
+    -n/name     The name of the executable file. Default is "pic2d-mpi-5CF4".
     -y          If set, the script silent running. Default is not set.
     -serial     if set, serial execution task. Default is not set.
     -h/help     Output help information.
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     # Paramter
     work_path  = "."
     rule_match = "."
-    exe_name = "pic2d-mpi"
+    exe_name = "pic2d-mpi-5CF4"
 
     # Parse input
     input_dict = parse_input(sys.argv)

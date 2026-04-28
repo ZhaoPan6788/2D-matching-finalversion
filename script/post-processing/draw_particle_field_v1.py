@@ -10,7 +10,7 @@ import h5py
 
 sys.path.append(os.path.split(os.path.abspath(''))[0])
 from base.read_matrix import MatrixDataReader
-from geom.geometry import *
+from script.geom.simplegeom.geometry import *
 from base.common import *
 
 import matplotlib.font_manager as fm
