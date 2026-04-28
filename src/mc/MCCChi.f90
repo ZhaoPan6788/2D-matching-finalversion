@@ -51,7 +51,7 @@ Module MCCEnergyKai
     	Real(8) :: Energy
         Real(8) :: CreatEnergyVehadi
         CALL RANDOM_NUMBER(R)
-        CreatEnergyVehadi=10.d0*Dtan(R*DAtan(Energy)/20.d0)
+        CreatEnergyVehadi=10.d0*Dtan(R*DAtan(Energy/20.d0))
         If(abs(CreatEnergyVehadi)<MinReal) then
                    CreatEnergyVehadi=MinReal
          end  if   

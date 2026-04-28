@@ -51,28 +51,31 @@ Module ModuleMCCIon
           end select
         return
         contains
-           Subroutine PostVelocityIonReactive(MCPO,RO)
-               implicit none
-               Type(MCCParticleOne),intent(inout) :: MCPO
-               Type(ReactionOne),intent(in) :: RO 
-               Real(8) :: VFactor,MassRatioA,MassRatioB
-               
-              VFactor=Dsqrt(1.d0-RO%Threshold/MCPO%Energy)
-              MCPO%Energy=MCPO%Energy-RO%Threshold
-              Call MCPO%VelocityUpdater(VFactor)
-               
-               MassRatioA=MCPO%MassRatio
-               MassRatioB=1.d0-MassRatioA
-               
+                Subroutine PostVelocityIonReactive(MCPO, RO)
+                implicit none
+                Type(MCCParticleOne), intent(inout) :: MCPO
+                Type(ReactionOne), intent(in) :: RO
+                Real(8) :: VFactor, MassRatioA, MassRatioB
+
+                VFactor = Dsqrt(1.d0 - RO%Threshold/MCPO%Energy)
+                MCPO%Energy = MCPO%Energy - RO%Threshold
+                ! Call MCPO%VelocityUpdater(VFactor)
+                MCPO%Gx   = VFactor*MCPO%Gx
+                MCPO%Gy   = VFactor*MCPO%Gy
+                MCPO%Gz   = VFactor*MCPO%Gz
+                MCPO%Gper = VFactor*MCPO%Gper
+                MCPO%G    = VFactor*MCPO%G
+
+                MassRatioA = MCPO%MassRatio
+                MassRatioB = 1.d0 - MassRatioA
+
                 Associate (Gx=>MCPO%Gx,Gy=>MCPO%Gy,Gz=>MCPO%Gz,Gper=>MCPO%Gper,G=>MCPO%G,&
-                    Vx=>MCPO%POI%Vr,Vy=>MCPO%POI%Vt,Vz=>MCPO%POI%Vz)
-                    Vx=MassRatioB*Vx+MassRatioA*MCPO%POT%Vr+MassRatioB*Gx
-                    Vy=MassRatioB*Vz+MassRatioA*MCPO%POT%Vt+MassRatioB*Gy
-                    Vz=MassRatioB*Vz+MassRatioA*MCPO%POT%Vz+MassRatioB*Gz
-                      return
-                 ENd Associate 
-            end subroutine PostVelocityIonReactive
+                        Vx=>MCPO%POI%Vr,Vy=>MCPO%POI%Vt,Vz=>MCPO%POI%Vz)
+                        Vx = MassRatioB*Vx + MassRatioA*MCPO%POT%Vr + MassRatioA*Gx
+                        Vy = MassRatioB*Vy + MassRatioA*MCPO%POT%Vt + MassRatioA*Gy
+                        Vz = MassRatioB*Vz + MassRatioA*MCPO%POT%Vz + MassRatioA*Gz
+                        return
+                ENd Associate
+                end subroutine PostVelocityIonReactive
   end  subroutine SelectCollisionIon  
 end Module ModuleMCCIon
-
-!
