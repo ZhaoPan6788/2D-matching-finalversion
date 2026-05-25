@@ -19,7 +19,7 @@
         "diag_Nt": 100
     },
     "grid": {
-        "z_length": 0.04,
+        "z_length": 0.065,
         "r_length": 0.0,
         "@r_length": "rLength is invalid",
         "deps_in_z": 2,
@@ -58,7 +58,7 @@
     },
     "gas": {
         "ng": 1,
-        "pressure": 250,
+        "pressure": 200,
         "temperature": 300,
         "name": [
             "CF4"
