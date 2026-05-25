@@ -18,6 +18,7 @@ file(GLOB_RECURSE Fortran_SRCS  ./base/numerical/Numrical.F90
                                 ./diag/grid/GridControlFlow.F90
                                 ./diag/diagstep.F90
                                 ./diag/diagParticleField.F90
+                                ./diag/diag_edf.F90
                                 ./diag/Grid.f90
                                 ./pic/domain/Domain.F90
                                 ./pic/domain/PICCom.F90

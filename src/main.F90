@@ -25,7 +25,7 @@ program pic2d
 
             call OneStep()
             if (mod (i, 100) == 0) then
-                call DiagOneStep(ParticleBundleLocal, FieldEMLocal, FieldOneLocal, FieldSourceLocal, GeometryGlobal)
+                call DiagOneStep(ControlFlowGlobal, ParticleBundleLocal, FieldEMLocal, FieldOneLocal, FieldSourceLocal, GeometryGlobal)
             end if
         end do
 
