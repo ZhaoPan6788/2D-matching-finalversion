@@ -802,6 +802,43 @@ contains
                         call JP%get('circuit.circuits_list['//trim(numstr)//'].R_stray', imn_R_stray, found)
                         CHECK_FOUND(found)
 
+                        call JP%get('circuit.circuits_list['//trim(numstr)//'].use_power_control', imn_use_power_control, found)
+                        if (found .and. imn_use_power_control) then
+                            call JP%get('circuit.circuits_list['//trim(numstr)//'].power_set', imn_power_set, found)
+                            CHECK_FOUND(found)
+
+                            call JP%get('circuit.circuits_list['//trim(numstr)//'].power_period', imn_power_period, found)
+                            CHECK_FOUND(found)
+
+                            call JP%get('circuit.circuits_list['//trim(numstr)//'].power_alpha', imn_power_alpha, found)
+                            if (.not. found) imn_power_alpha = 10.d0
+
+                            call imn_power_control%init(imn_power_period, imn_power_set, imn_power_alpha, "imn_power_control")
+                            imn_voltage_scale = 1.d0
+                        else
+                            imn_use_power_control = .False.
+                            imn_voltage_scale = 1.d0
+                        end if
+
+                    end if
+
+                case(circuit_type_power_source)
+                    each_circuit_counts(type_tmp) = each_circuit_counts(type_tmp) + 1
+                    EC%circuits_type(i) = circuit_type_power_source
+                    EC%circuits_index(i) = each_circuit_counts(type_tmp)
+                    EC%circuits_metal(i) = metal_index_tmp
+
+                    call JP%get('circuit.circuits_list['//trim(numstr)//'].period', seg, found)
+                    CHECK_FOUND(found)
+
+                    call JP%get('circuit.circuits_list['//trim(numstr)//'].power_set', tmp_val, found)
+                    CHECK_FOUND(found)
+
+                    call JP%get('circuit.circuits_list['//trim(numstr)//'].alpha', v, found)
+                    if (found) then
+                        call EC%power_sources(each_circuit_counts(type_tmp))%init(seg, tmp_val, v, name_tmp)
+                    else
+                        call EC%power_sources(each_circuit_counts(type_tmp))%init(seg, tmp_val, pname=name_tmp)
                     end if
 
             end select

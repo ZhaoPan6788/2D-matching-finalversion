@@ -94,14 +94,14 @@
         "circuits_list": [
             {
                 "type": 5,
+                "name": "imn_with_power_control",
                 "metal_index": 1,
-                "name": "source_to_top_electrode",
                 "n_freq": 1,
                 "frequency": [
                     27120000.0
                 ],
                 "amplitude": [
-                    300.0
+                    100.0
                 ],
                 "phase": [
                     0.0
@@ -109,12 +109,16 @@
                 "Rs": 50.0,
                 "Cm1": 1.5e-10,
                 "Cm2": 2e-10,
-                "Lm": 1e-05,
+                "Lm": 4.3e-06,
                 "Rm": 0.5,
                 "is_open_capacitance": false,
                 "C_stray": 2.4e-11,
                 "L_stray": 1e-08,
-                "R_stray": 0.5
+                "R_stray": 0.5,
+                "use_power_control": true,
+                "power_set": 50.0,
+                "power_period": 3690,
+                "power_alpha": 10.0
             },
             {
                 "type": 1,
@@ -186,6 +190,30 @@
                 "name": "source_to_top_electrode",
                 "n_freq": 1,
                 "frequency": [
+                    27120000.0
+                ],
+                "amplitude": [
+                    300.0
+                ],
+                "phase": [
+                    0.0
+                ],
+                "Rs": 50.0,
+                "Cm1": 1.5e-10,
+                "Cm2": 2e-10,
+                "Lm": 1e-05,
+                "Rm": 0.5,
+                "is_open_capacitance": false,
+                "C_stray": 2.4e-11,
+                "L_stray": 1e-08,
+                "R_stray": 0.5
+            },
+            {
+                "type": 5,
+                "name": "imn_with_power_control",
+                "metal_index": 1,
+                "n_freq": 1,
+                "frequency": [
                     13560000.0
                 ],
                 "amplitude": [
@@ -199,12 +227,16 @@
                 "Cm2": 2e-10,
                 "Lm": 4.3e-06,
                 "Rm": 0.5,
-                "is_open_capacitance": true,
+                "is_open_capacitance": false,
                 "C_stray": 2.4e-11,
                 "L_stray": 1e-08,
-                "R_stray": 0.5
+                "R_stray": 0.5,
+                "use_power_control": true,
+                "power_set": 50.0,
+                "power_period": 100,
+                "power_alpha": 10.0
             }
         ],
-        "@circuit_type": "1=digital ground | 2=voltage source | 3=pulse source | 4=rlc | 5=IMN (use only once)"
+        "@circuit_type": "1=digital ground | 2=voltage source | 3=pulse source | 4=rlc | 5=IMN | 6=power source"
     }
 }

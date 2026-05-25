@@ -6,6 +6,7 @@ module ModuleExtCircuit
     use ModuleCircuitRLC
     use ModuleMaterials
     use ModuleCircuitIMN
+    use ModulePower
 
     implicit none
 
@@ -15,8 +16,9 @@ module ModuleExtCircuit
     integer(4), parameter :: circuit_type_pulse_source = 3
     integer(4), parameter :: circuit_type_rlc_source = 4
     integer(4), parameter :: circuit_type_imn_source = 5
+    integer(4), parameter :: circuit_type_power_source = 6
 
-    integer(4), parameter :: circuit_type_number = 5
+    integer(4), parameter :: circuit_type_number = 6
 
     type ExtCircuits
         integer(4) :: circuits_number                       ! 电路的总数
@@ -32,6 +34,7 @@ module ModuleExtCircuit
         type(CircuitPulseSource), allocatable :: pulse_sources(:)
         type(CircuitRLC), allocatable :: rlc_sources(:)
         type(CircuitIMN), allocatable :: imn_sources(:)
+        type(PowerControl), allocatable :: power_sources(:)
 
     contains
 
@@ -86,6 +89,9 @@ module ModuleExtCircuit
 
                     case(circuit_type_imn_source)
                         if (this%circuits_size(i) > 0) allocate(this%imn_sources(this%circuits_size(i)))
+
+                    case(circuit_type_power_source)
+                        if (this%circuits_size(i) > 0) allocate(this%power_sources(this%circuits_size(i)))
 
                 end select
             end do
@@ -173,6 +179,19 @@ module ModuleExtCircuit
                         end if
                     end associate
 
+                case(circuit_type_power_source)
+                    associate(voltage => MT%metls(this%circuits_metal(i))%voltage, &
+                              charge => MT%metls(this%circuits_metal(i))%charge, &
+                              q0 => MT%metls(this%circuits_metal(i))%q0, &
+                              eqc => MT%metls(this%circuits_metal(i))%capacitance, &
+                              Qconv => MT%metls(this%circuits_metal(i))%charge_one_step, &
+                              dt => this%power_sources(this%circuits_index(i))%period * 1e-12)
+
+                        call this%power_sources(this%circuits_index(i))%adjust(voltage * Qconv/dt, voltage)
+                        charge = voltage * eqc + q0
+
+                    end associate
+
             end select
         end do
 
@@ -200,6 +219,9 @@ module ModuleExtCircuit
 
                 case(circuit_type_imn_source)
                     call this%imn_sources(this%circuits_index(i))%Zero()
+
+                case(circuit_type_power_source)
+                    call this%power_sources(this%circuits_index(i))%destroy()
 
             end select
         end do
@@ -270,6 +292,13 @@ module ModuleExtCircuit
                         write(*, '(a20, es12.4)') 'L_stray ', imn_L_stray
                         write(*, '(a20, es12.4)') 'R_stray ', imn_R_stray
 
+                    case(circuit_type_power_source)
+                        write(*, '(i4, 2x, a, 2x, a)') i, 'power source', &
+                                trim(this%power_sources(this%circuits_index(i))%IOName%DataName%str)
+                        write(*, '(20x, *(es12.4))') 'power_set:', this%power_sources(this%circuits_index(i))%power_set
+                        write(*, '(20x, *(es12.4))') 'period:', this%power_sources(this%circuits_index(i))%period
+                        write(*, '(20x, *(es12.4))') 'alpha:', this%power_sources(this%circuits_index(i))%alpha
+
                 end select
             end do
         end if
@@ -297,6 +326,9 @@ module ModuleExtCircuit
                 case(circuit_type_imn_source)
                     call this%imn_sources(this%circuits_index(i))%Dump()
 
+                case(circuit_type_power_source)
+                    call this%power_sources(this%circuits_index(i))%destroy()
+
             end select
         end do
 
@@ -322,6 +354,9 @@ module ModuleExtCircuit
 
                 case(circuit_type_imn_source)
                     call this%imn_sources(this%circuits_index(i))%Load()
+
+                case(circuit_type_power_source)
+                    call this%power_sources(this%circuits_index(i))%destroy()
 
             end select
         end do
@@ -350,6 +385,9 @@ module ModuleExtCircuit
                 case(circuit_type_imn_source)
                     call this%imn_sources(this%circuits_index(i))%Destroy()
 
+                case(circuit_type_power_source)
+                    call this%power_sources(this%circuits_index(i))%destroy()
+
             end select
         end do
 
@@ -364,6 +402,7 @@ module ModuleExtCircuit
         if (allocated(this%pulse_sources)) deallocate(this%pulse_sources)
         if (allocated(this%rlc_sources)) deallocate(this%rlc_sources)
         if (allocated(this%imn_sources)) deallocate(this%imn_sources)
+        if (allocated(this%power_sources)) deallocate(this%power_sources)
 
     end subroutine destroyExtCircuits
 

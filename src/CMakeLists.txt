@@ -29,6 +29,8 @@ file(GLOB_RECURSE Fortran_SRCS  ./base/numerical/Numrical.F90
                                 ./pic/circuit/transline.f90
                                 ./pic/circuit/RLC.F90
                                 ./pic/circuit/IMN.F90
+                                ./pic/circuit/power.F90
+                                ./pic/circuit/fftw.F90
                                 ./pic/field/FieldEM.f90
                                 ./pic/field/FieldOne.f90
                                 ./pic/field/FieldSolver.f90

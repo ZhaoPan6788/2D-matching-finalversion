@@ -4,6 +4,7 @@ Module ModuleCircuitIMN
     use ModuleFileName
     use ModuleParallelDump
     use sundials_ode
+    use ModulePower
 
     implicit none
 
@@ -29,6 +30,15 @@ Module ModuleCircuitIMN
     real(8), save :: imn_C_stray = 0.d0
     real(8), save :: imn_R_stray = 0.d0
     real(8), save :: imn_L_stray = 0.d0
+
+    logical, save :: imn_use_power_control = .False.
+    real(8), save :: imn_power_set = 0.d0
+    real(8), save :: imn_power_alpha = 10.d0
+    integer(4), save :: imn_power_period = 100
+    type(PowerControl), save :: imn_power_control
+
+    real(8), save :: imn_power_now = 0.d0
+    real(8), save :: imn_voltage_scale = 1.d0
 
     type CircuitIMN
         type(FileName) :: IOName
@@ -140,12 +150,17 @@ Module ModuleCircuitIMN
 
             call this%ode_imn%update()
 
+            if (imn_use_power_control) then
+                imn_power_now = imn_electrode_voltage * imn_electrode_current
+                call imn_power_control%adjust(imn_power_now, imn_voltage_scale)
+            end if
+
             associate(Nf => imn_source_frequency_num, Vol => imn_source_voltage, Amp => imn_source_amplitude, &
                       Fre => imn_source_frequency, Pha => imn_source_phase)
 
                 Vol = 0.d0
                 do i = 1, Nf
-                    Vol = Vol + Amp(i) * DSin(2 * PI * Fre(i) * time + Pha(i) / 180.d0 * PI)
+                    Vol = Vol + Amp(i) * imn_voltage_scale * DSin(2 * PI * Fre(i) * time + Pha(i) / 180.d0 * PI)
                 end do
 
             end associate
