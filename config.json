@@ -1,6 +1,6 @@
 {
     "control": {
-        "nrun": 3000,
+        "nrun": 200,
         "dt": 2e-11,
         "is_open_ctest": false,
         "check_particle_overstep": true,
@@ -19,12 +19,12 @@
         "diag_Nt": 100
     },
     "grid": {
-        "z_length": 0.04,
+        "z_length": 0.065,
         "r_length": 0.0,
         "@r_length": "rLength is invalid",
-        "deps_in_z": 4,
+        "deps_in_z": 1,
         "@deps_in_z": "Number of images in the z-direction",
-        "deps_in_r": 16,
+        "deps_in_r": 4,
         "@deps_in_r": "Number of images in the r-direction",
         "deps_type": 0,
         "@deps_type": "0=uniform | 1=specify | 2=load balance",
@@ -61,16 +61,16 @@
         "pressure": 100,
         "temperature": 300,
         "name": [
-            "CF4"
+            "Ar"
         ],
         "ratio": [
             1.0
         ],
         "positively_charged_particles": 1,
-        "negatively_charged_particles": 3,
+        "negatively_charged_particles": 1,
         "ng_max": 3,
         "ns_max": 9,
-        "is_open_recombination": true,
+        "is_open_recombination": false,
         "recb": {
             "recb_time_step_num": 20,
             "recb_reaction_num": 3,
@@ -116,9 +116,9 @@
                 "L_stray": 1e-08,
                 "R_stray": 0.5,
                 "use_power_control": true,
-                "power_set": 50.0,
-                "power_period": 3690,
-                "power_alpha": 10.0
+                "power_set": 20.0,
+                "power_period": 1844,
+                "power_alpha": 0.7
             },
             {
                 "type": 1,

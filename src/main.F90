@@ -24,9 +24,9 @@ program pic2d
             ControlFlowGlobal%Timer = ControlFlowGlobal%Timer + 1
 
             call OneStep()
-            if (mod (i, 100) == 0) then
-                call DiagOneStep(ControlFlowGlobal, ParticleBundleLocal, FieldEMLocal, FieldOneLocal, FieldSourceLocal, GeometryGlobal)
-            end if
+            ! if (mod (i, 100) == 0) then
+            call DiagOneStep(ControlFlowGlobal, ParticleBundleLocal, FieldEMLocal, FieldOneLocal, FieldSourceLocal, GeometryGlobal)
+            ! end if
         end do
 
         par(0:ControlFlowGlobal%Ns) = getParticleNum(ControlFlowGlobal%Ns, ParticleBundleLocal)
