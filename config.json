@@ -117,7 +117,7 @@
                 "R_stray": 0.5,
                 "use_power_control": true,
                 "power_set": 20.0,
-                "power_period": 1844,
+                "power_period": 369,
                 "power_alpha": 0.7
             },
             {

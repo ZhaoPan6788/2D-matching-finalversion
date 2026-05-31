@@ -15,6 +15,7 @@ Module ModuleCircuitIMN
     real(8), save :: imn_source_voltage = 0.d0
     real(8), save :: imn_electrode_current = 0.d0
     real(8), save :: imn_electrode_voltage = 0.d0
+    real(8), save :: imn_source_current = 0.d0
     real(8), save :: imn_Iconv = 0.d0
 
     real(8), save :: imn_eqc = 0.d0
@@ -89,7 +90,7 @@ Module ModuleCircuitIMN
 
                 Vol = 0.d0
                 do i = 1, Nf
-                    Vol = Vol + Amp(i) * DSin(2 * PI * Fre(i) * tn + Pha(i) / 180.d0 * PI)
+                    Vol = Vol + Amp(i) * imn_voltage_scale * DSin(2 * PI * Fre(i) * tn + Pha(i) / 180.d0 * PI)
                 end do
 
             end associate
@@ -150,11 +151,6 @@ Module ModuleCircuitIMN
 
             call this%ode_imn%update()
 
-            if (imn_use_power_control) then
-                imn_power_now = imn_electrode_voltage * imn_electrode_current
-                call imn_power_control%adjust(imn_power_now, imn_voltage_scale)
-            end if
-
             associate(Nf => imn_source_frequency_num, Vol => imn_source_voltage, Amp => imn_source_amplitude, &
                       Fre => imn_source_frequency, Pha => imn_source_phase)
 
@@ -164,6 +160,14 @@ Module ModuleCircuitIMN
                 end do
 
             end associate
+
+            if (imn_use_power_control) then
+                imn_electrode_voltage = (this%ode_imn%out(6) - q0) / eqc
+                imn_electrode_current = this%ode_imn%out(3) - this%ode_imn%out(5)
+                imn_source_current = (imn_source_voltage - (this%ode_imn%out(1) - this%ode_imn%out(2)) / imn_Cm1) / imn_Rs
+                imn_power_now = imn_source_voltage * imn_source_current
+                call imn_power_control%adjust(imn_power_now, imn_voltage_scale)
+            end if
 
         end subroutine UpdateCircuitIMN
 

@@ -171,6 +171,7 @@ module ModuleExtCircuit
                                                                         MT%metls(this%circuits_metal(i))%charge, &
                                                                         this%imn_sources(this%circuits_index(i))%ode_imn%out, &
                                                                         imn_source_voltage, &
+                                                                        imn_source_current, &
                                                                         imn_electrode_current, &
                                                                         imn_electrode_voltage, &
                                                                         imn_Iconv, &
