@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-from script.geom.simplegeom.geometry import *
+from geometry import *
 
 import numpy as np
 import matplotlib.pyplot as plt
