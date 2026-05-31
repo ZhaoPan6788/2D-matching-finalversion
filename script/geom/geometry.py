@@ -35,51 +35,6 @@ edge_type_dielectric_to_vacuum = 3
 edge_type_other = 4
 
 
-class Point:
-    def __init__(self, a, b) -> None:
-        self.d1 = a
-        self.d2 = b
-
-
-class Line:
-    def __init__(self, Point1: Point, Point2: Point) -> None:
-       self.p1 = Point1
-       self.p2 = Point2
-       self.check()
-    
-    def check(self) -> None:
-        if abs(self.p1.d1 - self.p2.d1) < 1e-15 and abs(self.p1.d2 - self.p2.d2) < 1e-15:
-            print('Line parameter is invalid.')
-
-
-class Hline:
-    def __init__(self, h, start, stop) -> None:
-        self.h = h
-        self.start = start
-        self.stop = stop
-        self.check()
-    
-    def check(self) -> None:
-        if self.h >= 0 and self.stop >= self.start and self.start >= 0:
-            pass
-        else:
-            print('Hline parameter is invalid.')
-
-
-class Vline:
-    def __init__(self, v, start, stop) -> None:
-        self.v = v
-        self.start = start
-        self.stop = stop
-        self.check()
-    
-    def check(self) -> None:
-        if self.v >= 0 and self.stop >= self.start and self.start >= 0:
-            pass
-        else:
-            print('Vline parameter is invalid.')
-
-
 class Rectangle:
     def __init__(self, bottom: int, left: int, higth: int, width: int) -> None:
         self.left = left
@@ -131,7 +86,6 @@ class Ellipse:
             print('Ellipse parameter is invalid.')
             return None
 
-
 class Material:
     def __init__(self, material_type: int, material_name: str, prop_dict: dict) -> None:
         self.type = material_type
@@ -154,6 +108,7 @@ class Material:
         del self.prop['name']
 
 
+
 # Define a geometry class with an uniform regular mesh, whose different areas can be set to different materials
 class Geometry:
     def __init__(self, Nz: int, Nr: int) -> None:
@@ -171,8 +126,6 @@ class Geometry:
         self.point_volume = np.zeros((self.Nz, self.Nr), dtype=float)
 
         self.cell_load = np.zeros((self.Nz-1, self.Nr-1), dtype=int)
-        self.diag_edf_pars = []
-        self.diag_flux_pars = []
 
     def add_material(self, mate: Union[list, Material]) -> None:
         if isinstance(mate, Material):
@@ -621,8 +574,6 @@ class Geometry:
         else: 
             for z in range(self.Nz-1):
                 for r in range(self.Nr-1):
-                    if z > 240:
-                        continue
                     if self.materials[self.cell_material[z, r]].type == material_type_vacuum:
                         self.cell_load[z, r] = 1
 
@@ -815,15 +766,6 @@ class Geometry:
 
             json.dump(dict, f, indent=4)
 
-        with open(os.path.join(path, filename+'_diag'+'.json'), 'w') as f:
-            dict = {}
-            dict['diag_edf_num'] = len(self.diag_edf_pars)
-            dict['diag_flux_num'] = len(self.diag_flux_pars)
-            dict['diag_edf'] = self.diag_edf_pars
-            dict['diag_flux'] = self.diag_flux_pars
-            
-            json.dump(dict, f, indent=4)
-
     def load(self, path: str, name: str = None) -> None:
         filename = 'geom'
         if name:
@@ -854,74 +796,3 @@ class Geometry:
                 tmp.from_dict(mates[i])
                 print(tmp.name, tmp.type, tmp.prop)
                 self.materials.append(tmp)
-
-    def add_diag_edf(self, rec: Union[list, Rectangle]) -> None:
-        if isinstance(rec, Rectangle):
-            rec_list = [rec]
-        elif isinstance(rec, list):
-            rec_list = rec
-        else:
-            print('Invalid input parameter type.')
-            return
-        
-        for rectangle in rec_list:
-            z_start = rectangle.bottom
-            z_end = rectangle.bottom + rectangle.higth
-            r_start = rectangle.left
-            r_end = rectangle.left + rectangle.width
-
-            self.diag_edf_pars.append([z_start, z_end, r_start, r_end])
-
-    def add_diag_flux(self, ln: Union[list, Line, Hline, Vline]) -> None:
-        if isinstance(ln, Line):
-            ln_list = [ln]
-        elif isinstance(ln, Hline):
-            ln_list = [ln]
-        elif isinstance(ln, Vline):
-            ln_list = [ln]
-        elif isinstance(ln, list):
-            ln_list = ln
-        else:
-            print('Invalid input parameter type.')
-            return
-
-        for line in ln_list:
-            if isinstance(line, Hline):
-                self.diag_flux_pars.append([line.h, line.start, line.stop])
-
-    def show_diag(self) -> None:
-        plt.figure(figsize=(12, 8))
-        self.show_grid(is_create_fig=False)
-        plt.xlim(0, self.Nr - 1)
-        plt.ylim(0, self.Nz - 1)
-        plt.xlabel('R-axis')
-        plt.ylabel('Z-axis')
-
-        color = 'r'
-        for i in range(len(self.diag_edf_pars)):
-            z_start = self.diag_edf_pars[i][0]
-            z_end = self.diag_edf_pars[i][1]
-            r_start = self.diag_edf_pars[i][2]
-            r_end = self.diag_edf_pars[i][3]
-
-            plt.hlines(y=z_start, xmin=r_start, xmax=r_end,
-                                color=color, linewidth=0.5)
-            plt.hlines(y=z_end, xmin=r_start, xmax=r_end,
-                                color=color, linewidth=0.5)
-            plt.vlines(x=r_start, ymin=z_start, ymax=z_end,
-                                color=color, linewidth=0.5)
-            plt.vlines(x=r_end, ymin=z_start, ymax=z_end,
-                                color=color, linewidth=0.5)
-            plt.text(r_start+0.5, z_start+0.5, str(i), fontdict={'size': 10})
-
-        color = 'b'
-        for i in range(len(self.diag_flux_pars)):
-            h = self.diag_flux_pars[i][0]
-            start = self.diag_flux_pars[i][1]
-            stop = self.diag_flux_pars[i][2]
-
-            plt.hlines(y=h, xmin=start, xmax=stop,
-                            color=color, linewidth=0.5)
-            plt.text((start+stop)*0.5, h+0.5, str(i), fontdict={'size': 10})
-
-        plt.show()
